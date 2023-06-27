@@ -37,6 +37,43 @@ object StackMachineEmulator {
                                  env: Map[String, Double],
                                  ins: StackMachineInstruction): (List[Double], Map[String, Double]) = {
         // TODO: Your code here.
+        ins match{
+            case LoadI(s) => {
+                  stack match {
+                        case (List()) => throw new IllegalArgumentException("load failed: stack empty")
+                        case (a::tail) => {
+                              val newEnv = env + (s->a)
+                              val newStack = tail
+                              (newStack, newEnv)
+                        }
+                  }
+            }
+            case StoreI(s) => {???}
+            case PushI(f) => {
+                  val newStack = f::stack
+                  (newStack, env)
+            }
+            case AddI => {
+                  stack match{
+                        case (a::b) => b+a
+                        case (a::List()) => throw new IllegalArgumentException("addition failed: insufficient elements in stack")
+                        case (List()) => throw new IllegalArgumentException("addition failed: stack empty")
+                  }
+            }
+            case SubI => {
+                  stack match{
+                        case (a::b) => b-a
+                        case (a::List()) => throw new IllegalArgumentException("subtraction failed: insufficient elements in stack")
+                        case (List()) => throw new IllegalArgumentException("subtraction failed: stack empty")
+                  }
+            }
+            case MultI => {???}
+            case DivI => {???}
+            case ExpI => {???}
+            case LogI => {???}
+            case SinI => {???}
+            case CosI => {???}
+            case PopI => {???}
 
         ???
     }
