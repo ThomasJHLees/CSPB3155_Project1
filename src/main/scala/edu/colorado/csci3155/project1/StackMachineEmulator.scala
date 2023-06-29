@@ -49,22 +49,13 @@ object StackMachineEmulator {
                   }
             }
             case StoreI(s) => {
-                  val isEmpty = env.nonEmpty
-                  isEmpty match{
-                        case (true) => throw new IllegalArgumentException("store failed: env empty")
-                        case (false) => {
-                              val exists = env.get(s)
-                                    exists match{
-                                          case (None) => {
-                                                throw new IllegalArgumentException("store failed: value not found in env")
-                                          }
-                                          case (x) => {
-                                                val newValue = x
-                                                val newStack = newValue::stack
-                                                (newStack, env)
-                                          }
-                                    }
-
+                  val storeVal = env.get(s)
+                  storeVal match{
+                        case None => {throw new IllegalArgumentException("store failed: identifier not found")}
+                        case _ => {
+                              val store:Double = storeVal.getOrElse(0)
+                              val newStack = store::stack
+                              (newStack,env)
                         }
                   }
             }
@@ -74,56 +65,127 @@ object StackMachineEmulator {
             }
             case AddI => {
                   stack match{
-                        case (a::b::tail) => {
-                              val newValue = b+a
-                              val newStack = newValue::tail
-                              (newStack, env)
+                        case (a::tail) => {
+                              val add = a
+                              tail match {
+                                    case (List()) => {throw new IllegalArgumentException("addition failed: insufficient elements in stack")}
+                                    case (b::tail) => {
+                                          val newValue = b+add
+                                          val newStack = newValue::tail
+                                          (newStack, env)
+                                    }
+                                    case _ => {throw new java.lang.IllegalArgumentException("addition failed")}
+                              }
                         }
-                        case (a::List()) => throw new IllegalArgumentException("addition failed: insufficient elements in stack")
-                        case (List()) => throw new IllegalArgumentException("addition failed: stack empty")
+                        case _ => {throw new java.lang.IllegalArgumentException("addition failed: stack empty")}
                   }
             }
             case SubI => {
                   stack match{
-                        case (a::b::tail) => {
-                              val newValue = b-a
-                              val newStack = newValue::tail
-                              (newStack, env)
+                        case (a::tail) => {
+                              val sub = a
+                              tail match {
+                                    case (List()) => {throw new IllegalArgumentException("subtraction failed: insufficient elements in stack")}
+                                    case (b::tail) => {
+                                          val newValue = b-sub
+                                          val newStack = newValue::tail
+                                          (newStack, env)
+                                    }
+                                    case _ => {throw new java.lang.IllegalArgumentException("subtraction failed")}
+                              }
                         }
-                        case (a::List()) => throw new IllegalArgumentException("subtraction failed: insufficient elements in stack")
-                        case (List()) => throw new IllegalArgumentException("subtraction failed: stack empty")
+                        case _ => {throw new java.lang.IllegalArgumentException("subtraction failed: stack empty")}
                   }
             }
             case MultI => {
                   stack match{
-                        case (a::b::tail) => {
-                              val newValue = b*a
-                              val newStack = newValue::tail
-                              (newStack, env)
+                        case (a::tail) => {
+                              val mult = a
+                              tail match {
+                                    case (List()) => {throw new IllegalArgumentException("multiplication failed: insufficient elements in stack")}
+                                    case (b::tail) => {
+                                          val newValue = b*mult
+                                          val newStack = newValue::tail
+                                          (newStack, env)
+                                    }
+                                    case _ => {throw new java.lang.IllegalArgumentException("multiplication failed")}
+
+                              }
                         }
-                        case (a::List()) => throw new IllegalArgumentException("multiplication failed: insufficient elements in stack")
-                        case (List()) => throw new IllegalArgumentException("multiplication failed: stack empty")
-                  }
+                        case _ => {throw new java.lang.IllegalArgumentException("multiplication failed: stack empty")}                 }
             }
             case DivI => {
                   stack match{
                         case (0::tail) => {throw new IllegalArgumentException("division failed: cannot divide by 0")}
-                        case (a::b::tail) => {
-                              val newValue = b/a
-                              val newStack = newValue::tail
-                              (newStack, env)
+                        case (a::tail) => {
+                              val denom = a
+                              tail match {
+                                    case (List()) => {throw new IllegalArgumentException("division failed: insufficient elements in stack")}
+                                    case (b::tail) => {
+                                          val newValue = b/denom
+                                          val newStack = newValue::tail
+                                          (newStack, env)
+                                    }
+                                    case _ => {throw new java.lang.IllegalArgumentException("division failed: stack empty")}
+
+                              }
                         }
-                        case (a::List()) => throw new IllegalArgumentException("division failed: insufficient elements in stack")
-                        case (List()) => throw new IllegalArgumentException("division failed: stack empty")
+                        case _ => {throw new java.lang.IllegalArgumentException("division failed")}
                   }
             }
-            case ExpI => {???}
-            case LogI => {???}
-            case SinI => {???}
-            case CosI => {???}
-            case PopI => {???}
+            case ExpI => {
+                  stack match{
+                        case (List()) => throw new IllegalArgumentException("exponential failed: stack empty")
+                        case (a::tail) =>{
+                              val newEntry = math.exp(a)
+                              val newStack = newEntry::tail
+                              (newStack, env)
+                        }
+                  }
+            }
+            case LogI => {
+                  stack match{
+                        case (List()) => throw new IllegalArgumentException("log failed: stack empty")
+                        case (a::tail) =>{
+                              if (a<=0) {throw new IllegalArgumentException("log failed: input must be greater than 0")}
+                              else {
+                                    val newEntry = math.log(a)
+                                    val newStack = newEntry::tail
+                                    (newStack, env)
+                              }
+                        }
+                  }
+            }
+            case SinI => {
+                  stack match{
+                        case (List()) => throw new IllegalArgumentException("sine failed: stack empty")
+                        case (a::tail) =>{
+                              val newEntry = math.sin(a)
+                              val newStack = newEntry::tail
+                              (newStack, env)
+                        }
+                  }
+            }
+            case CosI => {
+                  stack match{
+                        case (List()) => throw new IllegalArgumentException("cosine failed: stack empty")
+                        case (a::tail) =>{
+                              val newEntry = math.cos(a)
+                              val newStack = newEntry::tail
+                              (newStack, env)
+                        }
+                  }
+            }
+            case PopI => {
+                  stack match{
+                        case(List()) => throw new IllegalArgumentException("pop failed: stack empty")
+                        case(a::tail) => {
+                              val newStack = tail
+                              (newStack, env)
+                        }
+                  }
+            }
       }
-        ???
     }
 
     /* Function emulateStackMachine
@@ -139,7 +201,8 @@ object StackMachineEmulator {
      */
     def emulateStackMachine(instructionList: List[StackMachineInstruction]): Map[String, Double] =
         {
-            //TODO: Your Code here.
-              ???
+            val finalEnv = instructionList.foldLeft((List[Double](), Map[String,Double]())) 
+                  (emulateSingleInstruction(_,_,_))
+            finalEnv
         }
 }
