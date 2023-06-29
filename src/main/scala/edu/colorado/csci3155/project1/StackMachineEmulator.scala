@@ -201,8 +201,13 @@ object StackMachineEmulator {
      */
     def emulateStackMachine(instructionList: List[StackMachineInstruction]): Map[String, Double] =
         {
-            val finalEnv = instructionList.foldLeft((List[Double](), Map[String,Double]())) 
-                  (emulateSingleInstruction(_,_,_))
+            val finalEnv = instructionList.foldLeft((Nil, Map.empty))
+                  ((acc:(List[Double], Map[String,Double]), inst:StackMachineInstruction) => {
+                        val curStack = acc._1
+                        val curEnv = acc._2
+                        emulateSingleInstruction(curStack,curEnv, inst)})
             finalEnv
         }
+
+        //    val least = denoms.foldLeft(1)((y, x) => lcm(y,x))
 }
