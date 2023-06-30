@@ -36,7 +36,6 @@ object StackMachineEmulator {
     def emulateSingleInstruction(stack: List[Double],
                                  env: Map[String, Double],
                                  ins: StackMachineInstruction): (List[Double], Map[String, Double]) = {
-        // TODO: Your code here.
         ins match{
             case LoadI(s) => {
                   stack match {
@@ -200,14 +199,14 @@ object StackMachineEmulator {
              It will all fit nicely once you figure it out.
      */
     def emulateStackMachine(instructionList: List[StackMachineInstruction]): Map[String, Double] =
-        {
-            val finalEnv = instructionList.foldLeft((Nil, Map.empty))
-                  ((acc:(List[Double], Map[String,Double]), inst:StackMachineInstruction) => {
+      {
+            val finalEnv = instructionList.foldLeft((List[Double](), Map[String,Double]())) {
+                  ((acc, inst) => {
                         val curStack = acc._1
                         val curEnv = acc._2
-                        emulateSingleInstruction(curStack,curEnv, inst)})
-            finalEnv
-        }
-
-        //    val least = denoms.foldLeft(1)((y, x) => lcm(y,x))
+                        emulateSingleInstruction(curStack, curEnv, inst)
+                  })
+            }
+            finalEnv._2
+      }
 }
